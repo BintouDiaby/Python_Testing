@@ -1,4 +1,5 @@
 import json
+import server
 from server import app
 import pytest
 
@@ -6,6 +7,9 @@ import pytest
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
+    # reset global in-memory state before each test
+    server.clubs = server.loadClubs()
+    server.competitions = server.loadCompetitions()
     with app.test_client() as client:
         yield client
 
