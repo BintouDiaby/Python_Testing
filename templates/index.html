@@ -1,12 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GUDLFT Registration</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GUDLFT Registration</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Welcome to the GUDLFT Registration Portal!</h1>
+  <header class="container">
+    <h1>GUDLFT Registration</h1>
+  </header>
+  <main class="container">
+  <div class="card">
+  <h2>Welcome to the GUDLFT Registration Portal!</h2>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}

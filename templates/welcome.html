@@ -3,9 +3,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summary | GUDLFT Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
+    <header class="container">
+        <h2>Welcome, {{club['email']}}</h2>
+        <a class="button" href="{{url_for('logout')}}">Logout</a>
+        <a class="button" href="{{url_for('points')}}">Points</a>
+    </header>
+    <main class="container">
 
     {% with messages = get_flashed_messages()%}
     {% if messages %}
