@@ -46,11 +46,37 @@ def test_purchase_more_than_max_per_booking(client):
 
 
 def test_purchase_more_than_club_points(client):
-    club, competition = _load_first_club_and_competition()
-    try:
-        club_points = int(club.get('points', 0))
-    except (ValueError, TypeError):
-        club_points = 0
+    # pick a club that has fewer than 12 points so the points check is evaluated
+    with open('clubs.json') as f:
+        clubs = json.load(f)['clubs']
+    with open('competitions.json') as f:
+        competitions = json.load(f)['competitions']
+
+    candidate = None
+    for c in clubs:
+        try:
+            pts = int(c.get('points', 0))
+        except (ValueError, TypeError):
+            pts = 0
+        if pts < 12:
+            candidate = c
+            break
+    assert candidate is not None, "No club with <12 points in fixtures to test points check"
+    club = candidate
+    club_points = int(club.get('points', 0))
+
+    # choose a competition that has enough available places for club_points+1
+    competition = None
+    for comp in competitions:
+        try:
+            avail = int(comp.get('numberOfPlaces', 0))
+        except (ValueError, TypeError):
+            avail = 0
+        if avail >= (club_points + 1):
+            competition = comp
+            break
+    assert competition is not None, "No competition with enough places to run this test"
+
     # try to book one more place than the club has points
     res = client.post('/purchasePlaces', data={
         'competition': competition['name'],
