@@ -1,17 +1,18 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary | GUDLFT Registration</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <header class="container">
-        <h2>Welcome, {{club['email']}}</h2>
-        <a class="button" href="{{url_for('logout')}}">Logout</a>
-        <a class="button" href="{{url_for('points')}}">Points</a>
-    </header>
-    <main class="container">
+{% extends 'base.html' %}
+
+{% block title %}Tableau — {{ club['name'] }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="summary-head">
+        <h2>{{ club['name'] }}</h2>
+        <div class="summary-meta">Email: {{ club['email'] }} — Points: <strong>{{ club['points'] }}</strong></div>
+        <div class="actions">
+            <a class="button" href="{{ url_for('logout') }}">Se déconnecter</a>
+            <a class="button" href="{{ url_for('points') }}">Clubs & Points</a>
+        </div>
+    </div>
 
     {% with messages = get_flashed_messages()%}
     {% if messages %}
@@ -36,7 +37,5 @@
         <hr />
         {% endfor %}
     </ul>
-    {%endwith%}
-
-</body>
-</html>
+    </div>
+{% endblock %}

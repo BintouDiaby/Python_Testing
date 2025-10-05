@@ -1,26 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Points | GUDLFT</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <header class="container">
-        <h1>Clubs & Points</h1>
-        <a class="button" href="{{ url_for('index') }}">Accueil</a>
-    </header>
-    <main class="container">
-        <div class="points-list">
-            {% for club in clubs %}
-            <div class="card points-item">
-                <strong>{{ club['name'] }}</strong>
-                <div>Points: {{ club['points'] }}</div>
-                <div>Email: {{ club['email'] }}</div>
-            </div>
-            {% endfor %}
-        </div>
-    </main>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Points des clubs — GUDLFT{% endblock %}
+
+{% block content %}
+<h2>Clubs & leurs points</h2>
+<div class="points-list">
+  {% for club in clubs %}
+  <div class="card points-item">
+    <div class="club-name">{{ club['name'] }}</div>
+    <div class="club-points">{{ club['points'] }} pts</div>
+    <div class="club-email">{{ club['email'] }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

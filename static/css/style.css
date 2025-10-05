@@ -1,48 +1,42 @@
-/* Styles de base pour GUDLFT */
+:root{
+  --bg: #f6f9fb;
+  --card: #ffffff;
+  --accent: #0b5cff;
+  --muted: #64748b;
+  --radius: 8px;
+}
+/* Reset & base */
+*{box-sizing:border-box}
 body{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    margin: 0;
-    padding: 1rem;
-    background: #f7f9fc;
-    color: #222;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  margin:0;
+  background:var(--bg);
+  color:#0f1724;
+  -webkit-font-smoothing:antialiased;
 }
-header{
-    background: #0b5cff;
-    color: white;
-    padding: 1rem;
-    margin-bottom: 1rem;
+.container{max-width:1100px;margin:0 auto;padding:1rem}
+
+.site-header{background:linear-gradient(90deg,var(--accent),#0066ff);color:white}
+.site-header .nav{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0}
+.brand a{color:white;text-decoration:none;font-weight:700;font-size:1.25rem}
+.nav-links a{color:rgba(255,255,255,0.95);margin-left:1rem;text-decoration:none}
+
+.card{background:var(--card);padding:1rem;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,36,0.06);margin-bottom:1rem}
+
+.flashes{list-style:none;margin:0 0 1rem 0;padding:.5rem;border-radius:6px;background:#fff4f4;border:1px solid #ffd6d6}
+
+.button{display:inline-block;background:var(--accent);color:white;padding:.5rem .75rem;border-radius:6px;text-decoration:none}
+
+.points-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.points-item{padding:1rem;border-radius:8px;border-left:4px solid var(--accent);background:#fff}
+.club-name{font-weight:600;margin-bottom:.5rem}
+.club-points{color:var(--accent);font-weight:700}
+
+.summary-head{display:flex;flex-direction:column;gap:.5rem}
+.summary-meta{color:var(--muted);font-size:.95rem}
+.meta{color:var(--muted);font-size:.95rem;margin-bottom:.5rem}
+
+@media(min-width:720px){
+  .summary-head{flex-direction:row;align-items:center;justify-content:space-between}
 }
-.container{
-    max-width: 900px;
-    margin: 0 auto;
-}
-.flashes{
-    list-style: none;
-    padding: .5rem;
-    background: #ffe9e9;
-    border: 1px solid #ffb3b3;
-}
-.card{
-    background: white;
-    padding: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    margin-bottom: 1rem;
-}
-.points-list{
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-    gap: .75rem;
-}
-.points-item{
-    padding: .75rem;
-    border-left: 4px solid #0b5cff;
-}
-a.button{
-    display:inline-block;
-    background:#0b5cff;
-    color:white;
-    padding:.5rem .75rem;
-    text-decoration:none;
-    border-radius:4px;
-}
+

@@ -1,21 +1,13 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking for {{competition['name']}} || GUDLFT</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-</head>
-<body>
-    <header class="container">
-        <h2>{{competition['name']}}</h2>
-        <a class="button" href="{{ url_for('points') }}">Points</a>
-        <a class="button" href="{{ url_for('index') }}">Accueil</a>
-    </header>
-    <main class="container">
-    <div class="card">
-    Places available: {{competition['numberOfPlaces']}}
-    <p>Your club points: {{ club['points'] }}</p>
+{% extends 'base.html' %}
+
+{% block title %}Réserver — {{ competition['name'] }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h3>{{ competition['name'] }}</h3>
+  <div class="meta">Date: {{ competition['date'] }} — Places: <strong>{{ competition['numberOfPlaces'] }}</strong></div>
+  <p>Points du club: <strong>{{ club['points'] }}</strong></p>
     <form action="/purchasePlaces" method="post">
         <input type="hidden" name="club" value="{{club['name']}}">
         <input type="hidden" name="competition" value="{{competition['name']}}">
