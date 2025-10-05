@@ -76,8 +76,24 @@ def purchasePlaces():
         flash('Not enough places available')
         return redirect(url_for('index'))
 
+    # Check max per booking (12)
+    if placesRequired > 12:
+        flash('Cannot book more than 12 places')
+        return redirect(url_for('index'))
+
+    # Check club has enough points
+    try:
+        club_points = int(club.get('points', 0))
+    except (ValueError, TypeError):
+        club_points = 0
+    if placesRequired > club_points:
+        flash('Not enough points available')
+        return redirect(url_for('index'))
+
     # perform booking (in-memory only)
     competition['numberOfPlaces'] = available - placesRequired
+    # Deduct points from club (in-memory)
+    club['points'] = str(club_points - placesRequired)
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
