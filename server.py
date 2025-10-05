@@ -29,6 +29,18 @@ competitions = loadCompetitions()
 clubs = loadClubs()
 
 
+@app.before_request
+def reload_fixtures():
+    """Reload JSON fixtures before every request so manual edits are picked up
+    immediately without restarting the server. This is intentionally simple and
+    safe for development; for production a more efficient watcher or caching
+    strategy would be preferable.
+    """
+    global competitions, clubs
+    competitions = loadCompetitions()
+    clubs = loadClubs()
+
+
 def save_state():
     """Write current in-memory clubs and competitions back to their JSON files.
     This is only called when `app.config['PERSIST']` is True to avoid surprising
