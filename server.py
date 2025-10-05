@@ -80,6 +80,11 @@ def save_state():
     _atomic_write('clubs.json', {'clubs': clubs})
     _atomic_write('competitions.json', {'competitions': competitions})
 
+
+@app.context_processor
+def inject_current_year():
+    return {'current_year': datetime.datetime.utcnow().year}
+
 @app.route('/')
 def index():
     return render_template('index.html')
