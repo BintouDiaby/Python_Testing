@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Club Points</title>
+  </head>
+  <body>
+    <h1>Club Points</h1>
+    <ul>
+      {% for club in clubs %}
+        <li>{{ club.name }} — {{ club.points }}</li>
+      {% endfor %}
+    </ul>
+    <p><a href="/">Back</a></p>
+  </body>
+</html>

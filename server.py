@@ -51,9 +51,13 @@ def purchasePlaces():
     return render_template('welcome.html', club=club, competitions=competitions)
 
 
-# TODO: Add route for points display
-
-
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
+
+
+@app.route('/points')
+def points():
+    """Public page showing each club and its points."""
+    # `clubs` is loaded at module import time in this app; pass it to the template.
+    return render_template('points.html', clubs=clubs)
