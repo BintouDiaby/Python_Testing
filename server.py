@@ -1,4 +1,8 @@
 import json
+import os
+import shutil
+import datetime
+import tempfile
 from flask import Flask,render_template,request,redirect,flash,url_for
 
 
@@ -16,8 +20,10 @@ def loadCompetitions():
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
-# Toggle persistence: when True the app will write back changes to the JSON files
-app.config['PERSIST'] = False
+# Toggle persistence: can be enabled by setting the PERSIST environment variable to
+# '1', 'true' or 'yes'. It remains disabled by default to keep tests reproducible.
+env_persist = os.environ.get('PERSIST', 'false').lower()
+app.config['PERSIST'] = env_persist in ('1', 'true', 'yes')
 
 competitions = loadCompetitions()
 clubs = loadClubs()
@@ -30,10 +36,37 @@ def save_state():
     """
     if not app.config.get('PERSIST'):
         return
-    with open('clubs.json', 'w') as f:
-        json.dump({'clubs': clubs}, f, indent=4)
-    with open('competitions.json', 'w') as f:
-        json.dump({'competitions': competitions}, f, indent=4)
+
+    # Create timestamped backups before writing
+    ts = datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
+    try:
+        shutil.copy2('clubs.json', f'clubs.json.bak.{ts}')
+    except Exception:
+        # If backup fails, proceed cautiously — still attempt write
+        pass
+    try:
+        shutil.copy2('competitions.json', f'competitions.json.bak.{ts}')
+    except Exception:
+        pass
+
+    # Write atomically: write to temp file then replace
+    def _atomic_write(path, obj):
+        dirn = os.path.dirname(path) or '.'
+        fd, tmp = tempfile.mkstemp(dir=dirn)
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                json.dump(obj, f, indent=4)
+            os.replace(tmp, path)
+        finally:
+            # ensure temp removed if something went wrong
+            if os.path.exists(tmp):
+                try:
+                    os.remove(tmp)
+                except Exception:
+                    pass
+
+    _atomic_write('clubs.json', {'clubs': clubs})
+    _atomic_write('competitions.json', {'competitions': competitions})
 
 @app.route('/')
 def index():
