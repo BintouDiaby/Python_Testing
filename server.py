@@ -16,9 +16,24 @@ def loadCompetitions():
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
+# Toggle persistence: when True the app will write back changes to the JSON files
+app.config['PERSIST'] = False
 
 competitions = loadCompetitions()
 clubs = loadClubs()
+
+
+def save_state():
+    """Write current in-memory clubs and competitions back to their JSON files.
+    This is only called when `app.config['PERSIST']` is True to avoid surprising
+    writes during tests/development.
+    """
+    if not app.config.get('PERSIST'):
+        return
+    with open('clubs.json', 'w') as f:
+        json.dump({'clubs': clubs}, f, indent=4)
+    with open('competitions.json', 'w') as f:
+        json.dump({'competitions': competitions}, f, indent=4)
 
 @app.route('/')
 def index():
@@ -76,8 +91,28 @@ def purchasePlaces():
         flash('Not enough places available')
         return redirect(url_for('index'))
 
+    # Check max per booking (12)
+    if placesRequired > 12:
+        flash('Cannot book more than 12 places')
+        return redirect(url_for('index'))
+
+    # Check club has enough points
+    try:
+        club_points = int(club.get('points', 0))
+    except (ValueError, TypeError):
+        club_points = 0
+    if placesRequired > club_points:
+        flash('Not enough points available')
+        return redirect(url_for('index'))
+
     # perform booking (in-memory only)
     competition['numberOfPlaces'] = available - placesRequired
+    # Deduct points from club (in-memory)
+    club['points'] = str(club_points - placesRequired)
+
+    # Persist state when enabled
+    save_state()
+
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
