@@ -60,22 +60,108 @@ Merci !
     - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
 
     - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+# GUDLFT — mini-application Flask (état du projet)
 
-4. Current Setup
+Ce README a été mis à jour pour refléter l'état actuel du dépôt après les dernières itérations : ajout d'une page "Points", refonte HTML/CSS (branche `html`), validation côté serveur, et une option de persistance JSON (phase 2).
 
-    The app is powered by [JSON files](https://www.tutorialspoint.com/json/json_quick_guide.htm). This is to get around having a DB until we actually need one. The main ones are:
-     
-    * competitions.json - list of competitions
-    * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
+## Résumé rapide
 
-5. Testing
+- Application Flask utilisant des fixtures JSON (`clubs.json`, `competitions.json`).
+- Routes principales :
+  - `/` : page de connexion (index)
+  - `/showSummary` : affichage du tableau de bord pour un club (welcome)
+  - `/book/<competition>/<club>` : page de réservation
+  - `/purchasePlaces` : endpoint pour effectuer une réservation (validation + déduction de points)
+  - `/points` : nouvelle page publique listant les clubs et leurs points
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+## Fichiers importants
 
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
-   
- 6. Flake8 Report 
-    
+- `app.py` : point d'entrée pour lancer l'application
+- `server.py` : logique principale (chargement des fixtures, routes, persistance optionnelle)
+- `templates/` : templates Jinja2 (maintenant basés sur `templates/base.html`)
+- `static/css/style.css` : styles (refonte visuelle, responsive)
+- `tests/` : tests pytest (unitaires et d'intégration pour la persistance)
+
+## Installation et exécution (PowerShell)
+
+1) Créer et activer un virtualenv (si nécessaire)
+
+```powershell
+python -m venv venv
+.\\venv\\Scripts\\Activate.ps1
+```
+
+Si l'activation est bloquée par la politique PowerShell :
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\\venv\\Scripts\\Activate.ps1
+```
+
+2) Installer les dépendances
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+3) Lancer le serveur
+
+```powershell
+# avec le venv activé
+python app.py
+
+# ou sans activer le venv (utiliser directement le python du venv)
+.\\venv\\Scripts\\python.exe app.py
+```
+
+L'application écoute sur : `http://127.0.0.1:5000/`.
+
+## Activer la persistance JSON (optionnel)
+
+- Par défaut, l'application n'écrit pas dans les fichiers JSON (mode safe pour les tests).
+- Pour autoriser l'écriture :
+
+```powershell
+$env:PERSIST = '1'
+python app.py
+```
+
+- En mode persist, l'application crée des sauvegardes horodatées (`clubs.json.bak.YYYYMMDD...`) avant d'écrire et effectue des écritures atomiques.
+
+> Attention : la persistance modifie les fixtures — ne l'active pas si tu veux conserver l'état d'origine pour des tests reproductibles.
+
+## Notes sur le design et templates
+
+- Les templates héritent d'un `base.html` et utilisent `templates/index.html`, `welcome.html`, `booking.html`, `points.html`.
+- La branche `html` contient la refonte visuelle : CSS amélioré, layout responsive, et une page dédiée `points`.
+
+## Comportement développement
+
+- Branches utiles : `html` (UI), `phase2/persistence` (persistance JSON), `ci` (hook dev).
+- La branche `ci` contient un `@app.before_request` qui recharge les fixtures JSON avant chaque requête — pratique pour éditer `clubs.json`/`competitions.json` sans redémarrer le serveur. C'est à considérer *development-only*.
+
+## Tests
+
+- Lancer les tests :
+
+```powershell
+pytest -q
+```
+
+- Quelques tests valident la persistance et créent des backups temporaires — assure-toi d'avoir les droits d'écriture.
+
+## Points d'attention / recommandations
+
+- Ne comite pas le dossier `venv/` (ajoute `venv/` à `.gitignore` si nécessaire).
+- La persistance JSON est une solution de prototype ; pour de la production, migrer vers une vraie base de données.
+- Les templates et messages sont majoritairement en français après la refonte.
+
+## Prochaines actions proposées
+
+- (A) Peaufiner le design : logo, couleurs, icônes, petites animations CSS.
+- (B) Ouvrir une PR `html -> main` avec description et captures d'écran.
+- (C) Nettoyer/amariner les tests instables (marquer xfail ou isoler les tests d'intégration). 
+*** End Patch
+
 
 
