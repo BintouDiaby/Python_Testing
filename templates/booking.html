@@ -1,4 +1,3 @@
-<html lang="en">
 {% extends 'base.html' %}
 
 {% block title %}Réserver — {{ competition['name'] }}{% endblock %}
@@ -8,12 +7,13 @@
   <h3>{{ competition['name'] }}</h3>
   <div class="meta">Date: {{ competition['date'] }} — Places: <strong>{{ competition['numberOfPlaces'] }}</strong></div>
   <p>Points du club: <strong>{{ club['points'] }}</strong></p>
-    <form action="/purchasePlaces" method="post">
-        <input type="hidden" name="club" value="{{club['name']}}">
-        <input type="hidden" name="competition" value="{{competition['name']}}">
-        <label for="places">How many places?</label>
-        <input type="number" name="places" id="places" min="1" max="{{ [12, competition['numberOfPlaces']|int]|min }}" />
-        <button type="submit">Book</button>
-    </form>
-</body>
-</html>
+  <form action="/purchasePlaces" method="post">
+      <input type="hidden" name="club" value="{{ club['name'] }}">
+      <input type="hidden" name="competition" value="{{ competition['name'] }}">
+      <label for="places">Nombre de places :</label>
+      <input type="number" name="places" id="places" min="1" max="{{ [12, competition['numberOfPlaces']|int]|min }}" />
+      <button type="submit" class="button">Réserver</button>
+  </form>
+</div>
+
+{% endblock %}
