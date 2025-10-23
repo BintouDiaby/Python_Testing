@@ -174,6 +174,80 @@ def points():
     return render_template('points.html', clubs=clubs)
 
 
+@app.route('/tests')
+def tests_list():
+    """Lister les fichiers de test et extraire une courte description.
+
+    Recherche les fichiers matching tests/test_*.py et lit leur première
+    docstring ou première ligne de commentaire pour l'afficher comme
+    description. Cette vue est destinée à l'inspection locale/dev.
+    """
+    test_dir = os.path.join(os.path.dirname(__file__), 'tests')
+    entries = []
+    if os.path.isdir(test_dir):
+        for fname in sorted(os.listdir(test_dir)):
+            if fname.startswith('test_') and fname.endswith('.py'):
+                path = os.path.join(test_dir, fname)
+                desc = ''
+                try:
+                    with open(path, 'r', encoding='utf-8') as f:
+                        src = f.read()
+                    # Attempt to extract module docstring
+                    import ast
+                    try:
+                        mod = ast.parse(src)
+                        doc = ast.get_docstring(mod)
+                        if doc:
+                            desc = doc.strip().splitlines()[0]
+                        else:
+                            # fallback: first non-empty comment line
+                            for line in src.splitlines():
+                                s = line.strip()
+                                if s.startswith('#'):
+                                    desc = s.lstrip('#').strip()
+                                    break
+                    except Exception:
+                        # best-effort fallback
+                        for line in src.splitlines():
+                            s = line.strip()
+                            if s.startswith('#'):
+                                desc = s.lstrip('#').strip()
+                                break
+                except Exception:
+                    desc = 'Impossible de lire le fichier'
+
+                entries.append({'file': fname, 'path': path, 'description': desc})
+
+    return render_template('tests.html', tests=entries)
+
+
+@app.route('/static/tests/<path:filename>')
+def serve_test_file(filename):
+    """Servir en lecture seule les fichiers de tests pour inspection via le navigateur.
+
+    Cette route renvoie le contenu du fichier sous forme de text/plain. Elle
+    vérifie que le fichier demandé se trouve bien dans le dossier tests/ et
+    évite l'accès arbitraire à d'autres chemins.
+    """
+    safe_dir = os.path.join(os.path.dirname(__file__), 'tests')
+    requested = os.path.normpath(os.path.join(safe_dir, filename))
+    # Ensure requested is inside safe_dir
+    if not requested.startswith(os.path.abspath(safe_dir)):
+        return "Accès refusé", 403
+
+    if not os.path.exists(requested) or not os.path.isfile(requested):
+        return "Fichier non trouvé", 404
+
+    try:
+        with open(requested, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception:
+        return "Impossible de lire le fichier", 500
+
+    from flask import Response
+    return Response(content, mimetype='text/plain; charset=utf-8')
+
+
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))

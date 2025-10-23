@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des tests — GUDLFT{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Fichiers de tests</h2>
+  {% if tests %}
+  <table class="tests-table">
+    <thead>
+      <tr>
+        <th>Fichier</th>
+        <th>Description</th>
+        <th>Ouvrir</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tests %}
+      <tr>
+        <td>{{ t.file }}</td>
+        <td>{{ t.description or '—' }}</td>
+        <td><a href="/static/tests/{{ t.file }}" target="_blank">Ouvrir</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>Aucun fichier de test trouvé dans le dossier <code>tests/</code>.</p>
+  {% endif %}
+</div>
+{% endblock %}
